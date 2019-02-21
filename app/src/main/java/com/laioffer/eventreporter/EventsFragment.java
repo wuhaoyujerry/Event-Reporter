@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.laioffer.eventreporter.artifacts.Event;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -78,6 +81,19 @@ public class EventsFragment extends Fragment {
           Event event = noteDataSnapshot.getValue(Event.class);
           events.add(event);
         }
+
+        // Sort the event by reverse chronological order
+        Collections.sort(events, new Comparator<Event>() {
+          @Override
+          public int compare(Event o1, Event o2) {
+            if (o1.getTime() == o2.getTime()) {
+              return 0;
+            }
+
+            return o1.getTime() > o2.getTime() ? -1 : 1;
+          }
+        });
+
         mAdapter = new EventListAdapter(events, getContext());
         recyclerView.setAdapter(mAdapter);
       }
